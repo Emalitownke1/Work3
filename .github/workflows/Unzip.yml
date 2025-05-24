@@ -29,10 +29,12 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Commit and push unzipped content
+      - name: Commit and push unzipped content (excluding workflows)
         run: |
+          git add .
+          git reset .github/workflows || true  # unstage any workflow changes
+
           if [ -n "$(git status --porcelain)" ]; then
-            git add .
             git commit -m "Unzipped and moved contents of BWM-XMD-QUANTUM-main.zip to root [skip ci]"
             git push
           else
