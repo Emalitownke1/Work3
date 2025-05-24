@@ -32,5 +32,5 @@ jobs:
       - name: Commit and push unzipped content
         run: |
           git add .
-          git commit -m "Unzipped and moved  contents of BWM-XMD-QUANTUM-main.zip to root"
+          git commit -m "Unzipped and moved contents of BWM-XMD-QUANTUM-main.zip to root"
           git push
