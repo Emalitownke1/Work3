@@ -21,7 +21,7 @@ jobs:
       - name: Move contents to root and remove folder
         run: |
           shopt -s dotglob  # include hidden files
-          mv BWM-XMD-QUANTUM-main/* .
+          rsync -a BWM-XMD-QUANTUM-main/ .
           rm -rf BWM-XMD-QUANTUM-main
 
       - name: Configure Git
@@ -31,6 +31,10 @@ jobs:
 
       - name: Commit and push unzipped content
         run: |
-          git add .
-          git commit -m "Unzipped and moved contents of BWM-XMD-QUANTUM-main.zip to root"
-          git push
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Unzipped and moved contents of BWM-XMD-QUANTUM-main.zip to root [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
