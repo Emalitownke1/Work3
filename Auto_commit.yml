@@ -1,0 +1,42 @@
+name: Clean Redeploy Trigger
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+    - cron: '45 2 * * *'
+    - cron: '30 5 * * *'
+    - cron: '15 8 * * *'
+    - cron: '0 11 * * *'
+    - cron: '45 13 * * *'
+    - cron: '30 16 * * *'
+    - cron: '15 19 * * *'
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
+jobs:
+  deploy-trigger:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Full history needed for reset
+
+      - name: Save commit hash of clean state
+        run: |
+          echo "CLEAN_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+      - name: Create and push trigger commit
+        run: |
+          echo "Triggered at $(date -u) — $RANDOM" > .choreo-redeploy-trigger.txt
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add .choreo-redeploy-trigger.txt
+          git commit -m "chore: trigger redeploy"
+          git push
+
+      - name: Reset to clean state (force push)
+        run: |
+          git reset --hard $CLEAN_SHA
+          git push --force
